@@ -1,13 +1,12 @@
 import nodemailer from "nodemailer";
-import { downloadSheetFile, type ExportFormat } from "./drive-download";
+import { downloadSheetFile } from "./drive-download";
 
 /**
  * Email service for sending automated reports to HR
  * Uses SMTP configuration from environment variables
  */
 
-// Google Sheets URL for the project data
-const GOOGLE_SHEETS_URL = "https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/";
+// Email service configuration
 
 /**
  * Validate email environment variables
@@ -201,7 +200,7 @@ export async function sendProjectReportToHR(customMessage?: string): Promise<boo
             </ul>
 
             <div class="highlight">
-              <strong>Data Source:</strong> All information is directly sourced from our Google Sheets database at <a href="${GOOGLE_SHEETS_URL}" target="_blank">Project Management Sheet</a>
+              <strong>Data Source:</strong> All information is directly sourced from our Google Sheets database at <a href="https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit" target="_blank">Project Management Sheet</a>
             </div>
 
             <p>For any questions regarding this report or the underlying data, please contact the system administrator.</p>
@@ -241,7 +240,7 @@ Report Contents:
 - Time estimates and actual hours logged
 - Most recent update timestamps
 
-Data Source: All information is directly sourced from our Google Sheets database at ${GOOGLE_SHEETS_URL}
+Data Source: All information is directly sourced from our Google Sheets database at https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit
 
 For any questions regarding this report or the underlying data, please contact the system administrator.
 
@@ -370,7 +369,7 @@ export async function sendCustomNotificationToHR(
 
             <div class="highlight">
               <strong>Access Project Data:</strong><br>
-              <a href="${GOOGLE_SHEETS_URL}" class="sheets-link" target="_blank">Open Project Management Sheet</a><br>
+              <a href="https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit" class="sheets-link" target="_blank">Open Project Management Sheet</a><br>
               <small>View and edit live project data directly in Google Sheets</small>
             </div>
 
@@ -389,7 +388,7 @@ export async function sendCustomNotificationToHR(
 
           <div class="footer">
             <p>This is an automated message from ${appName}. Please do not reply to this email address.</p>
-            <p>Direct link: <a href="${GOOGLE_SHEETS_URL}" target="_blank">Project Management Sheet</a></p>
+            <p>Direct link: <a href="https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit" target="_blank">Project Management Sheet</a></p>
           </div>
         </div>
       </body>
@@ -405,7 +404,7 @@ Dear HR Team,
 ${message}
 
 Access Project Data:
-View and edit live project data directly at: ${GOOGLE_SHEETS_URL}
+View and edit live project data directly at: https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit
 
 ${includeAttachment ? 'Attached Files:\nExcel file with current project data is attached for offline analysis.\n\n' : ''}For any questions or assistance, please contact the system administrator.
 
@@ -414,7 +413,7 @@ Employee Management System
 
 ---
 This is an automated message from ${appName}. Please do not reply to this email address.
-Direct link: ${GOOGLE_SHEETS_URL}
+Direct link: https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit
     `;
 
     // Send email to each HR member

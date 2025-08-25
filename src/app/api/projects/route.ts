@@ -20,8 +20,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Initialize sheet if needed
-    await initializeSheet();
+    // Sheet connection established (no column verification)
 
     // @ts-ignore - Custom role field added in auth configuration
     const userRole = session.user.role;

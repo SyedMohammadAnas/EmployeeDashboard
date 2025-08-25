@@ -211,7 +211,7 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {userRole === "hr" ? (
           // HR Dashboard - shows all projects with statistics and export functionality
-          <HRDashboard userEmail={userEmail} />
+          <HRDashboard />
         ) : (
           // Employee Dashboard - shows only user's own projects with form to add/edit
           <EmployeeDashboard userEmail={userEmail} userName={userName} />

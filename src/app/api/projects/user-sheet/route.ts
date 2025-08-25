@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getUserProjects, getAllProjects } from "@/lib/google-sheets";
+// Google Sheets functions not needed for this route - using direct URLs
 
 /**
  * GET /api/projects/user-sheet

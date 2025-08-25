@@ -6,24 +6,19 @@ A simple web application for managing employee projects with direct Google Sheet
 
 ### Google Sheets Configuration
 
-**If you're seeing permission errors or can't access the sheet, follow these steps:**
+**Works with your existing Google Sheet - no column structure requirements!**
 
 1. **Share your Google Sheet with the service account:**
-   - Open your Google Sheet (ID: `1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24`)
+   - Open your Google Sheet: https://docs.google.com/spreadsheets/d/1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24/edit
    - Click the "Share" button in the top right
    - Add this email address: `hr-manager-sheets-service@employee-manager-automation.iam.gserviceaccount.com`
    - Give it "Editor" permissions
    - Click "Send"
 
-2. **Verify the sheet structure:**
-   - Ensure your Google Sheet has these column headers in row 1:
-     ```
-     Email | Name | Project Title | Project Description | Status | Deadline | Last Updated | Priority | Department | Estimated Hours | Actual Hours | Notes
-     ```
-
-3. **Test the connection:**
-   - Restart your development server
-   - Visit the dashboard - the Google Sheet should be embedded and visible
+2. **That's it! Your existing sheet structure will work:**
+   - No need to modify column headers or structure
+   - The system adapts to whatever columns you have
+   - Direct access to your sheet through the dashboard
 
 ## Features
 
@@ -32,11 +27,12 @@ A simple web application for managing employee projects with direct Google Sheet
   - Domain-based access control
   - Role-based permissions (HR vs Employee)
 
-- **Direct Google Sheets Integration**
+- **Direct Google Sheets Integration (No Column Requirements)**
   - **HR Dashboard:** Embedded Google Sheet with full editing capabilities
   - **Employee Dashboard:** Instructions and direct link to Google Sheets
-  - Real-time collaboration through Google Sheets
-  - No custom database required
+  - **Flexible:** Works with any existing sheet structure
+  - **Real-time collaboration** through Google Sheets
+  - **No database required** - your sheet is the database
 
 - **User-Friendly Interface**
   - Clean, modern design with Tailwind CSS v4

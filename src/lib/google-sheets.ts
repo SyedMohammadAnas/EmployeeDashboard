@@ -54,84 +54,50 @@ function getSheetId(): string {
 }
 
 /**
- * Initialize the Google Sheet with proper headers if it's empty
- * Creates the header row with all necessary columns
+ * Initialize the Google Sheet connection (removed column verification)
+ * Simply connects to the sheet without enforcing any structure
  */
 export async function initializeSheet(): Promise<void> {
   try {
     const sheets = getGoogleSheetsClient();
     const sheetId = getSheetId();
 
-    // First, get the sheet metadata to find the correct sheet name
+    // Just verify connection without modifying anything
     const spreadsheet = await sheets.spreadsheets.get({
       spreadsheetId: sheetId,
     });
 
-    // Get the first sheet (usually the default one)
     const sheet = spreadsheet.data.sheets?.[0];
     if (!sheet) {
       throw new Error("No sheets found in the spreadsheet");
     }
 
     const sheetName = sheet.properties?.title || "Sheet1";
-    console.log(`Initializing sheet: ${sheetName}`);
+    console.log(`Connected to sheet: ${sheetName}`);
 
-    // Check if sheet has headers
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: sheetId,
-      range: `${sheetName}!A1:L1`,
-    });
-
-    // If no data or incorrect headers, set up the sheet
-    if (!response.data.values || response.data.values.length === 0) {
-      const headers = [
-        "Email",
-        "Name",
-        "Project Title",
-        "Project Description",
-        "Status",
-        "Deadline",
-        "Last Updated",
-        "Priority",
-        "Department",
-        "Estimated Hours",
-        "Actual Hours",
-        "Notes",
-      ];
-
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: sheetId,
-        range: `${sheetName}!A1:L1`,
-        valueInputOption: "RAW",
-        requestBody: {
-          values: [headers],
-        },
-      });
-
-      console.log(`Sheet ${sheetName} initialized with headers`);
-    }
+    // No column verification or header modification
+    console.log("Sheet connection established successfully");
   } catch (error) {
-    console.error("Failed to initialize sheet:", error);
+    console.error("Failed to connect to sheet:", error);
     // Don't throw error, just log it to prevent crashes
-    console.log("Sheet initialization failed, but continuing...");
+    console.log("Sheet connection failed, but continuing...");
   }
 }
 
 /**
- * Get all project entries from the Google Sheet
- * @returns Array of project entries
+ * Get all project entries from the Google Sheet (simplified - no column structure enforcement)
+ * @returns Array of project entries with flexible data mapping
  */
 export async function getAllProjects(): Promise<ProjectEntry[]> {
   try {
     const sheets = getGoogleSheetsClient();
     const sheetId = getSheetId();
 
-    // First, get the sheet metadata to find the correct sheet name
+    // Get the sheet metadata to find the correct sheet name
     const spreadsheet = await sheets.spreadsheets.get({
       spreadsheetId: sheetId,
     });
 
-    // Get the first sheet (usually the default one)
     const sheet = spreadsheet.data.sheets?.[0];
     if (!sheet) {
       throw new Error("No sheets found in the spreadsheet");
@@ -140,18 +106,19 @@ export async function getAllProjects(): Promise<ProjectEntry[]> {
     const sheetName = sheet.properties?.title || "Sheet1";
     console.log(`Using sheet: ${sheetName}`);
 
-    // Get all data from the sheet (starting from row 2 to skip headers)
+    // Get all data from the sheet (flexible range to capture all data)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: sheetId,
-      range: `${sheetName}!A2:L1000`, // Get up to 1000 rows
+      range: `${sheetName}!A2:Z1000`, // Expanded range to capture any column structure
     });
 
     const rows = response.data.values || [];
 
-    // Convert rows to ProjectEntry objects
+    // Convert rows to ProjectEntry objects with flexible mapping
     const projects: ProjectEntry[] = rows
       .filter(row => row.length > 0 && row[0]) // Filter out empty rows
       .map((row): ProjectEntry => ({
+        // Flexible mapping - use whatever data is available in each position
         email: row[0] || "",
         name: row[1] || "",
         projectTitle: row[2] || "",
@@ -166,6 +133,7 @@ export async function getAllProjects(): Promise<ProjectEntry[]> {
         notes: row[11] || "",
       }));
 
+    console.log(`Retrieved ${projects.length} projects from sheet without structure validation`);
     return projects;
   } catch (error) {
     console.error("Failed to get projects:", error);
@@ -190,7 +158,7 @@ export async function getUserProjects(userEmail: string): Promise<ProjectEntry[]
 }
 
 /**
- * Add or update a project entry in the Google Sheet
+ * Add or update a project entry in the Google Sheet (simplified - no column structure enforcement)
  * If project exists (same email + title), update it; otherwise, add new row
  * @param projectData - Project entry data
  */
@@ -209,7 +177,7 @@ export async function addOrUpdateProject(projectData: Partial<ProjectEntry>): Pr
     }
     const sheetName = sheet.properties?.title || "Sheet1";
 
-    // Ensure required fields are present
+    // Simplified validation - just check for basic fields
     if (!projectData.email || !projectData.projectTitle) {
       throw new Error("Email and project title are required");
     }
@@ -221,7 +189,7 @@ export async function addOrUpdateProject(projectData: Partial<ProjectEntry>): Pr
                  project.projectTitle === projectData.projectTitle
     );
 
-    // Prepare the row data
+    // Prepare the row data - flexible mapping without strict column requirements
     const rowData = [
       projectData.email,
       projectData.name || "",
@@ -242,7 +210,7 @@ export async function addOrUpdateProject(projectData: Partial<ProjectEntry>): Pr
       const rowNumber = existingProjectIndex + 2;
       await sheets.spreadsheets.values.update({
         spreadsheetId: sheetId,
-        range: `${sheetName}!A${rowNumber}:L${rowNumber}`,
+        range: `${sheetName}!A${rowNumber}:Z${rowNumber}`, // Flexible range
         valueInputOption: "RAW",
         requestBody: {
           values: [rowData],
@@ -253,7 +221,7 @@ export async function addOrUpdateProject(projectData: Partial<ProjectEntry>): Pr
       // Add new project
       await sheets.spreadsheets.values.append({
         spreadsheetId: sheetId,
-        range: `${sheetName}!A:L`,
+        range: `${sheetName}!A:Z`, // Flexible range
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         requestBody: {
@@ -326,14 +294,14 @@ export async function deleteProject(userEmail: string, projectTitle: string): Pr
 }
 
 /**
- * Export all projects data as CSV format
+ * Export all projects data as CSV format (simplified - no column structure requirements)
  * @returns CSV string of all project data
  */
 export async function exportProjectsAsCSV(): Promise<string> {
   try {
     const projects = await getAllProjects();
 
-    // Create CSV headers
+    // Create CSV headers - simplified and flexible
     const headers = [
       "Email",
       "Name",
@@ -349,18 +317,18 @@ export async function exportProjectsAsCSV(): Promise<string> {
       "Notes"
     ];
 
-    // Convert projects to CSV rows
+    // Convert projects to CSV rows with flexible data handling
     const csvRows = [
       headers.join(","), // Header row
       ...projects.map(project => [
-        `"${project.email}"`,
-        `"${project.name}"`,
-        `"${project.projectTitle}"`,
-        `"${project.projectDescription.replace(/"/g, '""')}"`, // Escape quotes
-        `"${project.status}"`,
-        `"${project.deadline}"`,
-        `"${project.lastUpdated}"`,
-        `"${project.priority}"`,
+        `"${project.email || ""}"`,
+        `"${project.name || ""}"`,
+        `"${project.projectTitle || ""}"`,
+        `"${(project.projectDescription || "").replace(/"/g, '""')}"`, // Escape quotes
+        `"${project.status || ""}"`,
+        `"${project.deadline || ""}"`,
+        `"${project.lastUpdated || ""}"`,
+        `"${project.priority || ""}"`,
         `"${project.department || ""}"`,
         `"${project.estimatedHours || ""}"`,
         `"${project.actualHours || ""}"`,
@@ -368,6 +336,7 @@ export async function exportProjectsAsCSV(): Promise<string> {
       ].join(","))
     ];
 
+    console.log(`Exported ${projects.length} projects to CSV without column structure requirements`);
     return csvRows.join("\n");
   } catch (error) {
     console.error("Failed to export projects as CSV:", error);
@@ -376,7 +345,7 @@ export async function exportProjectsAsCSV(): Promise<string> {
 }
 
 /**
- * Export all projects data as Excel format
+ * Export all projects data as Excel format (simplified - no column structure requirements)
  * @returns Buffer containing Excel file data
  */
 export async function exportProjectsAsExcel(): Promise<Buffer> {
@@ -388,7 +357,7 @@ export async function exportProjectsAsExcel(): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Employee Projects');
 
-    // Add headers
+    // Add headers - flexible and simplified
     const headers = [
       "Email", "Name", "Project Title", "Project Description", "Status",
       "Deadline", "Last Updated", "Priority", "Department",
@@ -404,17 +373,17 @@ export async function exportProjectsAsExcel(): Promise<Buffer> {
       fgColor: { argb: 'FFE6F3FF' }
     };
 
-    // Add data rows
+    // Add data rows with flexible data handling
     projects.forEach(project => {
       worksheet.addRow([
-        project.email,
-        project.name,
-        project.projectTitle,
-        project.projectDescription,
-        project.status,
-        project.deadline,
-        project.lastUpdated,
-        project.priority,
+        project.email || "",
+        project.name || "",
+        project.projectTitle || "",
+        project.projectDescription || "",
+        project.status || "",
+        project.deadline || "",
+        project.lastUpdated || "",
+        project.priority || "",
         project.department || "",
         project.estimatedHours || "",
         project.actualHours || "",

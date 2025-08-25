@@ -10,10 +10,10 @@ import { useToaster } from "@/components/ui/toaster";
  * Props for the HR Dashboard component
  */
 interface HRDashboardProps {
-  userEmail: string;
+  // No props needed - component is self-contained
 }
 
-export function HRDashboard({ userEmail }: HRDashboardProps) {
+export function HRDashboard({}: HRDashboardProps) {
   // State management for professional features
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
@@ -33,7 +33,7 @@ export function HRDashboard({ userEmail }: HRDashboardProps) {
 
   const toaster = useToaster();
 
-  // Google Sheet configuration - The exact sheet specified by the user
+  // Google Sheet configuration - Working directly with user's sheet (no column structure requirements)
   const sheetId = "1tMFs1KcNriTRGcpQ_Q_yF_ynrsblMLvXtIeehYZel24";
   const sheetEmbedUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/edit?usp=sharing&rm=embedded`;
   const sheetEditUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
@@ -324,7 +324,7 @@ export function HRDashboard({ userEmail }: HRDashboardProps) {
           <div>
             <h2 className="text-2xl font-bold text-gray-900">HR Dashboard</h2>
             <p className="text-gray-600 mt-1">
-              Manage employee projects with professional tools and direct sheet editing
+              Manage employee projects with direct sheet access - no column structure requirements
             </p>
           </div>
 
@@ -421,8 +421,8 @@ export function HRDashboard({ userEmail }: HRDashboardProps) {
       {isSettingsOpen && (
         <div className="bg-white rounded-lg border p-6">
           <div className="border-b border-gray-200 pb-4 mb-6">
-            <h3 className="text-lg font-medium text-gray-900">Professional Settings</h3>
-            <p className="text-sm text-gray-600 mt-1">Configure email notifications and project management options</p>
+            <h3 className="text-lg font-medium text-gray-900">Dashboard Settings</h3>
+            <p className="text-sm text-gray-600 mt-1">Configure email notifications and reports (works with any sheet structure)</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
