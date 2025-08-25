@@ -71,7 +71,10 @@ export async function GET(request: NextRequest) {
     console.log(`File size: ${buffer.byteLength} bytes`);
 
     // Return the file with proper headers for download
-    return new NextResponse(buffer, {
+    // Convert Buffer to Uint8Array if needed, as NextResponse expects BodyInit type
+    const responseBody = Buffer.isBuffer(buffer) ? new Uint8Array(buffer) : buffer;
+
+    return new NextResponse(responseBody, {
       status: 200,
       headers: {
         ...headers,

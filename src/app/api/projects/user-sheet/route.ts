@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       sheetId,
     });
 
-      } catch (error) {
+  } catch (error) {
     console.error("Failed to generate user sheet URL:", error);
 
     return NextResponse.json(

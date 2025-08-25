@@ -86,7 +86,7 @@ export const authOptions: NextAuthOptions = {
      * Makes user role and other info available in client components
      */
     async session({ session, token }) {
-      if (token) {
+      if (token && session.user) {
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;
