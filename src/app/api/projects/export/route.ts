@@ -72,7 +72,10 @@ export async function GET(request: NextRequest) {
     console.log(`Projects exported as ${format.toUpperCase()} by HR user: ${userEmail}`);
 
     // Return file
-    return new NextResponse(exportData, {
+    // Convert Buffer to Uint8Array if needed, as NextResponse expects BodyInit type
+    const responseBody = Buffer.isBuffer(exportData) ? new Uint8Array(exportData) : exportData;
+
+    return new NextResponse(responseBody, {
       status: 200,
       headers: {
         'Content-Type': contentType,
